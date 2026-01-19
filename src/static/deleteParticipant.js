@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <p><strong>Current Participants:</strong></p>
             <ul class="participants-list" style="list-style-type: none;">
               ${details.participants.length > 0 
-                ? details.participants.map(p => `<li>${p} <button class='delete-btn' data-participant='${p}' data-activity='${name}'>🗑️</button></li>`).join('') 
+                ? details.participants.map(p => `<li>${p} <button class='delete-btn' data-participant='${p}'>🗑️</button></li>`).join('') 
                 : '<li class="no-participants">No participants yet</li>'}
             </ul>
           </div>
@@ -70,8 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
-        // Refresh activities list after successful signup
-        fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";
@@ -93,29 +91,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize app
   fetchActivities();
-  document.addEventListener('click', (event) => {
-    if (event.target.classList.contains('delete-btn')) {
-      const participant = event.target.getAttribute('data-participant');
-      const activity = event.target.getAttribute('data-activity');
-      // Call function to unregister participant
-      unregisterParticipant(participant, activity);
-    }
-  });
-
-  async function unregisterParticipant(participant, activity) {
-    try {
-      const response = await fetch(`/unregister?participant=${encodeURIComponent(participant)}&activity=${encodeURIComponent(activity)}`, {
-        method: 'DELETE',
-      });
-      const result = await response.json();
-      if (response.ok) {
-        // Refresh activities list after successful unregistration
-        fetchActivities();
-      } else {
-        console.error('Error unregistering participant:', result);
-      }
-    } catch (error) {
-      console.error('Error unregistering participant:', error);
-    }
-  }
 });
